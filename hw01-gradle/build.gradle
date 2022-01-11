@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+//не билдится, если вынести в root-проект -> остаётся на уровне дочернем
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+dependencies {
+    implementation 'com.google.guava:guava'
+}
+
+shadowJar {
+    archiveBaseName.set('harryPotterJar')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'ru.otus.HelloOtus'
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
