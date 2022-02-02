@@ -1,5 +1,9 @@
 package homework;
 
+import homework.annotation.After;
+import homework.annotation.Before;
+import homework.annotation.Test;
+
 /**
  * Создать три аннотации - @Test, @Before, @After.
  * <p>
@@ -15,7 +19,7 @@ package homework;
  * <p>
  * "Запускалка теста" не должна иметь состояние, но при этом весь функционал должен быть разбит на приватные методы. Надо придумать, как передавать информацию между методами.
  */
-public class DummyTest {
+public class DummyService {
 
     @Before
     void beforeEveryTest() {

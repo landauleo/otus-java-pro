@@ -1,4 +1,4 @@
-package homework;
+package homework.annotation;
 
 import java.lang.annotation.*;
 
