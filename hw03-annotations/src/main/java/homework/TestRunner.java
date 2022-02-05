@@ -32,16 +32,11 @@ public class TestRunner {
             e.printStackTrace();
             return;
         }
-        Object instance;
-        try {
-            instance = clazz.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            System.err.println("Unable to instantiate object of " + className + ":");
-            e.printStackTrace();
-            return;
-        }
+        List<Method> annotatedBeforeMethods = getAnnotatedBefore(clazz.getDeclaredMethods()); //getMethods() and getDeclaredMethods() ARE NOT THE SAME
+        List<Method> annotatedTestMethods = getAnnotatedTest(clazz.getDeclaredMethods());
+        List<Method> annotatedAfterMethods = getAnnotatedAfter(clazz.getDeclaredMethods());
 
-        invoke(clazz, instance);
+        annotatedTestMethods.forEach(method -> invoke(method, clazz, annotatedBeforeMethods, annotatedAfterMethods));
     }
 
     private void analyse(Instant start, Instant finish) {
@@ -60,6 +55,10 @@ public class TestRunner {
         return Class.forName(className);
     }
 
+    private Object getNewInstanceByClass(Class<?> clazz) throws ReflectiveOperationException {
+        return clazz.getDeclaredConstructor().newInstance();
+    }
+
     private List<Method> getAnnotatedBefore(Method[] methods) {
         return Arrays.stream(methods).filter(method -> method.isAnnotationPresent(Before.class)).collect(Collectors.toList());
     }
@@ -72,42 +71,41 @@ public class TestRunner {
         return Arrays.stream(methods).filter(method -> method.isAnnotationPresent(After.class)).collect(Collectors.toList());
     }
 
-    private void invoke(Class<?> clazz, Object instance) {
-        List<Method> annotatedBeforeMethods = getAnnotatedBefore(clazz.getDeclaredMethods()); //getMethods() and getDeclaredMethods() ARE NOT THE SAME
-        List<Method> annotatedTestMethods = getAnnotatedTest(clazz.getDeclaredMethods());
-        List<Method> annotatedAfterMethods = getAnnotatedAfter(clazz.getDeclaredMethods());
-
-        annotatedTestMethods.forEach(testMethod -> {
-
-            annotatedBeforeMethods.forEach(beforeMethod -> {
-                try {
-                    beforeMethod.invoke(instance);
-                } catch (ReflectiveOperationException e) {
-                    System.err.println("Unable to invoke methods annotated @Before for method " + testMethod + ":");
-                    e.printStackTrace();
-                }
-            });
-
+    private void invoke(Method testMethod, Class<?> clazz, List<Method> annotatedBeforeMethods, List<Method> annotatedAfterMethods) {
+        Object instance;
+        try {
+            instance = getNewInstanceByClass(clazz);
+        } catch (ReflectiveOperationException e) {
+            System.err.println("Unable to instantiate object of class " + clazz.getName() + " and run test " + testMethod.getName());
+            e.printStackTrace();
+            return;
+        }
+        annotatedBeforeMethods.forEach(beforeMethod -> {
             try {
-                testMethod.invoke(instance);
-                System.out.println(testMethod.getName() + " PASSED");
-                passed++;
-            } catch (Exception e) {
-                //Интересно: если сделать System.out, то строка выводится не в ожидаемом порядке, а в самом низу консоли
-                System.out.println(testMethod.getName() + " FAILED");
-                failed++;
+                beforeMethod.invoke(instance);
+            } catch (ReflectiveOperationException e) {
+                System.err.println("Unable to invoke methods annotated @Before for method " + testMethod + ":");
+                e.printStackTrace();
             }
+        });
 
-            annotatedAfterMethods.forEach(afterMethod -> {
-                try {
-                    afterMethod.invoke(instance);
-                } catch (ReflectiveOperationException e) {
-                    System.err.println("Unable to invoke methods annotated @After for method " + testMethod + ":");
-                    e.printStackTrace();
-                }
-            });
+        try {
+            testMethod.invoke(instance);
+            System.out.println(testMethod.getName() + " PASSED");
+            passed++;
+        } catch (Exception e) {
+            //Интересно: если сделать System.out, то строка выводится не в ожидаемом порядке, а в самом низу консоли
+            System.out.println(testMethod.getName() + " FAILED");
+            failed++;
+        }
 
+        annotatedAfterMethods.forEach(afterMethod -> {
+            try {
+                afterMethod.invoke(instance);
+            } catch (ReflectiveOperationException e) {
+                System.err.println("Unable to invoke methods annotated @After for method " + testMethod + ":");
+                e.printStackTrace();
+            }
         });
     }
-
 }
