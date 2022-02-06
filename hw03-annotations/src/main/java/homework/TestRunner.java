@@ -4,6 +4,7 @@ import homework.annotation.After;
 import homework.annotation.Before;
 import homework.annotation.Test;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.Instant;
@@ -13,8 +14,12 @@ import java.util.stream.Collectors;
 
 public class TestRunner {
 
-    private int passed = 0;
-    private int failed = 0;
+    private final static Class<? extends Annotation> BEFORE_CLASS = Before.class;
+    private final static Class<? extends Annotation> TEST_CLASS = Test.class;
+    private final static Class<? extends Annotation> AFTER_CLASS = After.class;
+
+    private static int passed = 0;
+    private static int failed = 0;
 
     void run(String className) {
         Instant start = Instant.now();
@@ -32,9 +37,9 @@ public class TestRunner {
             e.printStackTrace();
             return;
         }
-        List<Method> annotatedBeforeMethods = getAnnotatedBefore(clazz.getDeclaredMethods()); //getMethods() and getDeclaredMethods() ARE NOT THE SAME
-        List<Method> annotatedTestMethods = getAnnotatedTest(clazz.getDeclaredMethods());
-        List<Method> annotatedAfterMethods = getAnnotatedAfter(clazz.getDeclaredMethods());
+        List<Method> annotatedBeforeMethods = filterByAnnotationClass(clazz.getDeclaredMethods(), BEFORE_CLASS); //getMethods() and getDeclaredMethods() ARE NOT THE SAME
+        List<Method> annotatedTestMethods = filterByAnnotationClass(clazz.getDeclaredMethods(), TEST_CLASS);
+        List<Method> annotatedAfterMethods = filterByAnnotationClass(clazz.getDeclaredMethods(), AFTER_CLASS);
 
         annotatedTestMethods.forEach(method -> invoke(method, clazz, annotatedBeforeMethods, annotatedAfterMethods));
     }
@@ -59,16 +64,8 @@ public class TestRunner {
         return clazz.getDeclaredConstructor().newInstance();
     }
 
-    private List<Method> getAnnotatedBefore(Method[] methods) {
-        return Arrays.stream(methods).filter(method -> method.isAnnotationPresent(Before.class)).collect(Collectors.toList());
-    }
-
-    private List<Method> getAnnotatedTest(Method[] methods) {
-        return Arrays.stream(methods).filter(method -> method.isAnnotationPresent(Test.class)).collect(Collectors.toList());
-    }
-
-    private List<Method> getAnnotatedAfter(Method[] methods) {
-        return Arrays.stream(methods).filter(method -> method.isAnnotationPresent(After.class)).collect(Collectors.toList());
+    private List<Method> filterByAnnotationClass(Method[] methods, Class<? extends Annotation> clazz) {
+        return Arrays.stream(methods).filter(method -> method.isAnnotationPresent(clazz)).collect(Collectors.toList());
     }
 
     private void invoke(Method testMethod, Class<?> clazz, List<Method> annotatedBeforeMethods, List<Method> annotatedAfterMethods) {
@@ -94,7 +91,7 @@ public class TestRunner {
             System.out.println(testMethod.getName() + " PASSED");
             passed++;
         } catch (Exception e) {
-            //Интересно: если сделать System.out, то строка выводится не в ожидаемом порядке, а в самом низу консоли
+            //Интересно: если сделать System.err, то строка выводится не в ожидаемом порядке, а в самом низу консоли в отличие от System.out
             System.out.println(testMethod.getName() + " FAILED");
             failed++;
         }
