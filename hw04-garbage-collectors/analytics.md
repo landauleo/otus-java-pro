@@ -17,22 +17,26 @@ spend msec:18284, sec:18
 ***
 ### Исполнение:
 
-`cd hw04-garbage-collectors/`
+`cd hw04-garbage-collectors/homework`
 
-`java -jar -Xmx256m build/libs/hw04-garbage-collectors.jar` 
+`gradle clean build`
+
+`java -jar -Xmx256m build/libs/hw04.jar` 
 _Если я правильно поняла формулировку, но нужен был именно Xmx, не Xms_
 
+### Data
 
-| Heap size | msec before optimization   | msec after optimization    |
-|-----------|----------------------------|----------------------------|
-| -Xmx256m  | java.lang.OutOfMemoryError | java.lang.OutOfMemoryError |
-| -Xmx2g    | 15974                      | 13380                      |
-| -Xmx3g    | 12862                      | 11611                      |
-| -Xmx4g    | 13531                      | 15108                      |
-| -Xmx2500m | 14853                      | 13680                      |
-| -Xmx3500m | 14548                      | 13081                      |
-| -Xmx3100m | 14137                      | **11251**                  |
-| -Xmx3200m | **11773**                  | 12236                      |
-| -Xmx3300m | 12508                      | 1236                       |
-| -Xmx3400m | 12458                      | 12289                      |
-| -Xmx3250m | 11858                      | 12261                      |
+| Heap size | msec before optimization     | msec after optimization |
+|-----------|------------------------------|-------------------------|
+| -Xmx256m  | java.lang.OutOfMemoryError   | **842**                 |
+| -Xmx2g    | 13641                        | 905                     |
+| -Xmx3g    | 12077                        | 907                     |
+| -Xmx4g    | 14696                        | 919                     |
+| -Xmx2500m | 13884                        | 898                     |
+| -Xmx3500m | 12233                        | 903                     |
+| -Xmx3100m | 11557                        | 898                     |
+| -Xmx3200m | 11997                        | 902                     |
+| -Xmx3300m | **11376**                    | 904                     |
+| -Xmx3400m | 11905                        | 916                     |
+| -Xmx3250m | 12362                        | 905                     |
+| -Xmx128m  | java.lang.OutOfMemoryError   | 898                     |
