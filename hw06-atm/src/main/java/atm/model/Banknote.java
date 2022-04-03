@@ -2,9 +2,9 @@ package atm.model;
 
 import java.math.BigInteger;
 
-public class Banknote {
+public class Banknote implements Cloneable{
 
-    private final BanknoteType type;
+    private BanknoteType type;
     private BigInteger amount;
 
     public BanknoteType getType() {
@@ -19,9 +19,24 @@ public class Banknote {
         this.amount = amount;
     }
 
+    public void setType(BanknoteType type) {
+        this.type = type;
+    }
+
     public Banknote(BanknoteType type, BigInteger amount) {
         this.type = type;
         this.amount = amount;
     }
 
+    @Override
+    public Banknote clone() {
+        try {
+            Banknote clone = (Banknote) super.clone();
+            clone.setAmount(this.getAmount());
+            clone.setType(this.getType());
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

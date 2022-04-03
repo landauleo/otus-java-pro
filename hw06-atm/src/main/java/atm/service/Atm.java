@@ -45,22 +45,28 @@ public class Atm {
         validateInputAmount(amount);
         checkBanknoteSufficiency(amount);
 
-        BigInteger sum = BigInteger.ZERO;
-        banknoteList.forEach(item -> sum.add(item.getType().getDenomination()));
         List<Banknote> resultList = new ArrayList<>();
-        for (Banknote banknote : banknoteList) {
-            if (amount.compareTo(banknote.getType().getDenomination()) > 0 && banknote.getAmount().compareTo(BigInteger.ZERO) > 0) {
-                amount = amount.subtract(banknote.getType().getDenomination());
-                banknote.setAmount(banknote.getAmount().subtract(BigInteger.ONE));
-                resultList.add(banknote);
+        for (int i = 0; i < banknoteList.size() || banknoteList.get(0).getAmount().compareTo(BigInteger.ZERO) != 0; i++) {
+            if (amount.compareTo(banknoteList.get(0).getType().getDenomination()) > 0 && banknoteList.get(0).getAmount().compareTo(BigInteger.ZERO) > 0) {
+                amount = amount.subtract(banknoteList.get(0).getType().getDenomination());
+                banknoteList.get(0).setAmount(banknoteList.get(0).getAmount().subtract(BigInteger.ONE));
+                resultList.add(banknoteList.get(0));
             }
         }
         return resultList;
     }
 
-//    public List<Banknote> getAccountBalance(BigInteger amount) {
-//
-//    }
+    public BigInteger getAccountBalance() {
+        BigInteger sum = BigInteger.ZERO;
+        for (Banknote banknote : banknoteList) {
+            Banknote cloned = banknote.clone(); //not shallow, but deep copy
+            while (cloned.getAmount().compareTo(BigInteger.ZERO) > 0) {
+                sum = sum.add(cloned.getType().getDenomination());
+                cloned.setAmount(cloned.getAmount().subtract(BigInteger.ONE));
+            }
+        }
+        return sum;
+    }
 
     private void validateInputAmount(BigInteger amount) {
         if (amount.compareTo(BigInteger.ZERO) == 0) {
@@ -72,20 +78,25 @@ public class Atm {
     }
 
     private void checkBanknoteSufficiency(BigInteger amount) {
-        BigInteger totalBalance = BigInteger.ZERO;
-        banknoteList.forEach(item -> totalBalance.add(item.getType().getDenomination()));
+        BigInteger totalBalance = getAccountBalance();
 
         if (totalBalance.compareTo(amount) < 0) {
-            throw new InsufficientBanknoteAmountException("[ ± _ ± ] Sorry, we're running out of money [ ± _ ± ]");
+            throw new InsufficientBanknoteAmountException("[ ± _ ± ] Sorry, we're running out of money, max sum that may be provided is " + totalBalance + "[ ± _ ± ]");
         }
 
-        List<Banknote> copiedBanknoteList = banknoteList;
         BigInteger copiedAmount = amount;
-        for (Banknote banknote : copiedBanknoteList) {
-            if (copiedAmount.compareTo(banknote.getType().getDenomination()) > 0 && banknote.getAmount().compareTo(BigInteger.ZERO) > 0) {
-                copiedAmount = copiedAmount.subtract(banknote.getType().getDenomination());
-                banknote.setAmount(banknote.getAmount().subtract(BigInteger.ONE));
+        Banknote cloned;
+        for (int i = 0; i < banknoteList.size() || copiedAmount.compareTo(BigInteger.ZERO) != 0; i++) {
+            cloned = banknoteList.get(i).clone(); //not shallow, but deep copy
+            while (copiedAmount.compareTo(cloned.getType().getDenomination()) >= 0 && cloned.getAmount().compareTo(BigInteger.ZERO) > 0) {
+                copiedAmount = copiedAmount.subtract(cloned.getType().getDenomination());//10
+                cloned.setAmount(cloned.getAmount().subtract(BigInteger.ONE));
             }
+        }
+
+        if(copiedAmount.compareTo(BigInteger.ZERO) != 0) {
+            throw new InsufficientBanknoteAmountException("(」°ロ°)」 Sorry, we have not enough banknotes for your money request, try to change your request based on the information below: (」°ロ°)」\n" +
+                    banknoteList.toString());
         }
     }
 
