@@ -2,6 +2,7 @@ package atm;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import atm.infrastructure.exception.InsufficientBanknoteAmountException;
 import atm.infrastructure.exception.UnacceptableInputAmountException;
@@ -51,13 +52,20 @@ class AtmTest {
     }
 
     @Test
-    @DisplayName("Чуть более удобно сконструированный (теперь никаких множественных ссёртов) тест на выдачу банкнот")
-    void testGetBanknotes() {
-        assertThrows(UnacceptableInputAmountException.class, () -> atm.getBanknotes(BigInteger.ZERO), "٩(ఠ益ఠ)۶ Amount should be greater that zero ٩(ఠ益ఠ)۶");
-        assertThrows(NumberFormatException.class, () -> atm.getBanknotes(BigInteger.valueOf(123)), "(ಡ‸ಡ) Decimal value is required (ಡ‸ಡ)");
-        assertThrows(InsufficientBanknoteAmountException.class, () -> atm.getBanknotes(BigInteger.valueOf(1230)), "[ ± _ ± ] Sorry, we're running out of money, max sum that may be provided is 0 [ ± _ ± ]");
+    @DisplayName("Тест на проверку валидности запрашиваемой суммы")
+    void testGetBanknotesThrowsWhenInvalidRequestValue() {
+        UnacceptableInputAmountException unacceptableInputAmountException = assertThrows(UnacceptableInputAmountException.class, () -> atm.getBanknotes(BigInteger.ZERO));
+        assertEquals("٩(ఠ益ఠ)۶ Amount should be greater that zero ٩(ఠ益ఠ)۶", unacceptableInputAmountException.getMessage());
+        NumberFormatException numberFormatException = assertThrows(NumberFormatException.class, () -> atm.getBanknotes(BigInteger.valueOf(123)));
+        assertEquals("(ಡ‸ಡ) Decimal value is required (ಡ‸ಡ)", numberFormatException.getMessage());
+        InsufficientBanknoteAmountException insufficientBanknoteAmountException = assertThrows(InsufficientBanknoteAmountException.class, () -> atm.getBanknotes(BigInteger.valueOf(1230)));
+        assertEquals("[ ± _ ± ] Sorry, we're running out of money, max sum that may be provided is 0 [ ± _ ± ]", insufficientBanknoteAmountException.getMessage());
+    }
 
-        atm.acceptBanknotes( List.of( //15470
+    @Test
+    @DisplayName("Тест на проверку максимальной запрашиваемой суммы")
+    void testGetBanknotesMaxSum() {
+        atm.acceptBanknotes( List.of(
                 new Banknote(BanknoteType.FIVE_THOUSAND, BigInteger.valueOf(2)),
                 new Banknote(BanknoteType.TWO_THOUSAND, BigInteger.valueOf(1)),
                 new Banknote(BanknoteType.THOUSAND, BigInteger.valueOf(3)),
@@ -66,17 +74,75 @@ class AtmTest {
                 new Banknote(BanknoteType.FIFTY, BigInteger.valueOf(1)),
                 new Banknote(BanknoteType.TEN, BigInteger.valueOf(2))));
 
+        assertEquals(BigInteger.valueOf(15470),atm.getAccountBalance());
         assertThrows(InsufficientBanknoteAmountException.class, () -> atm.getBanknotes(BigInteger.valueOf(15480)), "[ ± _ ± ] Sorry, we're running out of money, max sum that may be provided is 15470 [ ± _ ± ]");
         assertEquals(BigInteger.valueOf(15470),atm.getAccountBalance());
-        assertDoesNotThrow(() -> atm.getBanknotes(BigInteger.valueOf(1000)));
-        assertEquals(BigInteger.valueOf(14470),atm.getAccountBalance());
-        assertDoesNotThrow(() -> atm.getBanknotes(BigInteger.valueOf(10_000))); //15460
-        //TODO: чекнуть, когда сумма достаточная, но купюр не хватает
-
     }
 
     @Test
+    @DisplayName("Тест на проверку запрашиваемой суммы без ошибок")
+    void testGetValidBanknotes() {
+        atm.acceptBanknotes( List.of(
+                new Banknote(BanknoteType.FIVE_THOUSAND, BigInteger.valueOf(2)),
+                new Banknote(BanknoteType.TWO_THOUSAND, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.THOUSAND, BigInteger.valueOf(3)),
+                new Banknote(BanknoteType.TWO_HUNDRED, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.HUNDRED, BigInteger.valueOf(2)),
+                new Banknote(BanknoteType.FIFTY, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.TEN, BigInteger.valueOf(2))));
+
+        assertEquals(BigInteger.valueOf(15470),atm.getAccountBalance());
+        assertDoesNotThrow(() -> atm.getBanknotes(BigInteger.valueOf(2_000)));
+        assertEquals(BigInteger.valueOf(13470),atm.getAccountBalance());
+    }
+
+    @Test
+    @DisplayName("Тест на проверку запрашиваемой суммы без ошибок и получение самых крупных купюр в первую очередь")
+    void testGetBanknotesWithTheBiggestDenomination() {
+        atm.acceptBanknotes( List.of(
+                new Banknote(BanknoteType.FIVE_THOUSAND, BigInteger.valueOf(2)),
+                new Banknote(BanknoteType.TWO_THOUSAND, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.THOUSAND, BigInteger.valueOf(3)),
+                new Banknote(BanknoteType.TWO_HUNDRED, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.HUNDRED, BigInteger.valueOf(2)),
+                new Banknote(BanknoteType.FIFTY, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.TEN, BigInteger.valueOf(2))));
+
+        assertEquals(BigInteger.valueOf(15470),atm.getAccountBalance());
+        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getAmount(), BigInteger.TWO);
+        assertDoesNotThrow(() -> atm.getBanknotes(BigInteger.valueOf(7_000)));
+        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getAmount(), BigInteger.ONE);
+        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TWO_THOUSAND).findFirst().get().getAmount(), BigInteger.ZERO);
+        assertEquals(BigInteger.valueOf(8470),atm.getAccountBalance());
+    }
+
+    @Test
+    @DisplayName("Тест на проверку запрашиваемой суммы, когда достаточно денег на балансе")
+    void testGetBanknotesWhenNotEnoughNeededDenomination() {
+        atm.acceptBanknotes( List.of(
+                new Banknote(BanknoteType.FIVE_THOUSAND, BigInteger.valueOf(2)),
+                new Banknote(BanknoteType.TWO_THOUSAND, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.THOUSAND, BigInteger.valueOf(3)),
+                new Banknote(BanknoteType.TWO_HUNDRED, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.HUNDRED, BigInteger.valueOf(2)),
+                new Banknote(BanknoteType.FIFTY, BigInteger.valueOf(1)),
+                new Banknote(BanknoteType.TEN, BigInteger.valueOf(2))));
+
+        assertEquals(BigInteger.valueOf(15470),atm.getAccountBalance());
+        assertThrows(InsufficientBanknoteAmountException.class, () -> atm.getBanknotes(BigInteger.valueOf(530)));
+    }
+
+    @Test
+    @DisplayName("Тест на получение баланса")
     void testGetAccountBalance() {
+        assertEquals(BigInteger.ZERO, atm.getAccountBalance());
+
+        atm.acceptBanknotes( List.of(
+                new Banknote(BanknoteType.FIVE_HUNDRED, BigInteger.valueOf(4)),
+                new Banknote(BanknoteType.FIFTY, BigInteger.valueOf(4)),
+                new Banknote(BanknoteType.TEN, BigInteger.valueOf(4))));
+
+        assertEquals(BigInteger.valueOf(2_240), atm.getAccountBalance());
     }
 
 }

@@ -46,11 +46,17 @@ public class Atm {
         checkBanknoteSufficiency(amount);
 
         List<Banknote> resultList = new ArrayList<>();
-        for (int i = 0; i < banknoteList.size() || banknoteList.get(0).getAmount().compareTo(BigInteger.ZERO) != 0; i++) {
-            if (amount.compareTo(banknoteList.get(0).getType().getDenomination()) > 0 && banknoteList.get(0).getAmount().compareTo(BigInteger.ZERO) > 0) {
-                amount = amount.subtract(banknoteList.get(0).getType().getDenomination());
-                banknoteList.get(0).setAmount(banknoteList.get(0).getAmount().subtract(BigInteger.ONE));
-                resultList.add(banknoteList.get(0));
+        for (int i = 0; i < banknoteList.size() && amount.compareTo(BigInteger.ZERO) != 0; i++) {
+            Banknote banknote = banknoteList.get(i);
+            while (amount.compareTo(banknote.getType().getDenomination()) >= 0 && banknote.getAmount().compareTo(BigInteger.ZERO) > 0) {
+                amount = amount.subtract(banknote.getType().getDenomination());
+                banknote.setAmount(banknote.getAmount().subtract(BigInteger.ONE));
+                if (!resultList.isEmpty() && resultList.get(resultList.size() - 1).getType() == banknote.getType()) {
+                    Banknote banknoteWithNeededType = resultList.stream().filter(item -> item.getType() == banknote.getType()).findFirst().get();
+                    banknoteWithNeededType.setAmount(banknoteWithNeededType.getAmount().add(BigInteger.ONE));
+                } else {
+                    resultList.add(new Banknote(banknote.getType(), BigInteger.ONE));
+                }
             }
         }
         return resultList;
@@ -81,12 +87,12 @@ public class Atm {
         BigInteger totalBalance = getAccountBalance();
 
         if (totalBalance.compareTo(amount) < 0) {
-            throw new InsufficientBanknoteAmountException("[ ± _ ± ] Sorry, we're running out of money, max sum that may be provided is " + totalBalance + "[ ± _ ± ]");
+            throw new InsufficientBanknoteAmountException("[ ± _ ± ] Sorry, we're running out of money, max sum that may be provided is " + totalBalance + " [ ± _ ± ]");
         }
 
         BigInteger copiedAmount = amount;
         Banknote cloned;
-        for (int i = 0; i < banknoteList.size() || copiedAmount.compareTo(BigInteger.ZERO) != 0; i++) {
+        for (int i = 0; i < banknoteList.size() && copiedAmount.compareTo(BigInteger.ZERO) != 0; i++) {
             cloned = banknoteList.get(i).clone(); //not shallow, but deep copy
             while (copiedAmount.compareTo(cloned.getType().getDenomination()) >= 0 && cloned.getAmount().compareTo(BigInteger.ZERO) > 0) {
                 copiedAmount = copiedAmount.subtract(cloned.getType().getDenomination());//10
@@ -95,8 +101,13 @@ public class Atm {
         }
 
         if(copiedAmount.compareTo(BigInteger.ZERO) != 0) {
-            throw new InsufficientBanknoteAmountException("(」°ロ°)」 Sorry, we have not enough banknotes for your money request, try to change your request based on the information below: (」°ロ°)」\n" +
-                    banknoteList.toString());
+            StringBuilder stringBuilder = new StringBuilder();
+            banknoteList.forEach(item -> {
+                stringBuilder.append("banknote denomination: ").append(item.getType().getDenomination());
+                stringBuilder.append(" current denomination amount: ").append(item.getAmount()).append("\n");
+            });
+            throw new InsufficientBanknoteAmountException("(」°ロ°)」 Sorry, we have not enough banknotes for your money request, " +
+                    "try to change your request based on the information below: (」°ロ°)」\n" + stringBuilder);
         }
     }
 
