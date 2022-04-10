@@ -1,6 +1,6 @@
 package ru.otus.model;
 
-public class Message {
+public class Message implements Cloneable{
     private final long id;
     private final String field1;
     private final String field2;
@@ -89,6 +89,11 @@ public class Message {
 
     public ObjectForMessage getField13() {
         return field13;
+    }
+
+    @Override
+    public Message clone() {
+        return this.toBuilder().field13(this.field13).build();
     }
 
     @Override
@@ -231,7 +236,7 @@ public class Message {
 
 
         public Builder field13(ObjectForMessage field13) {
-            this.field13 = field13;
+            this.field13 = new ObjectForMessage(field13);
             return this;
         }
 
