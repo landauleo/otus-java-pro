@@ -5,34 +5,34 @@ import java.math.BigInteger;
 public class Banknote implements Cloneable{
 
     private BanknoteType type;
-    private BigInteger amount;
+    private BigInteger number;
 
     public BanknoteType getType() {
         return type;
     }
 
-    public BigInteger getAmount() {
-        return amount;
+    public BigInteger getNumber() {
+        return number;
     }
 
-    public void setAmount(BigInteger amount) {
-        this.amount = amount;
+    public void setNumber(BigInteger number) {
+        this.number = number;
     }
 
     public void setType(BanknoteType type) {
         this.type = type;
     }
 
-    public Banknote(BanknoteType type, BigInteger amount) {
+    public Banknote(BanknoteType type, BigInteger number) {
         this.type = type;
-        this.amount = amount;
+        this.number = number;
     }
 
     @Override
     public Banknote clone() {
         try {
             Banknote clone = (Banknote) super.clone();
-            clone.setAmount(this.getAmount());
+            clone.setNumber(this.getNumber());
             clone.setType(this.getType());
             return clone;
         } catch (CloneNotSupportedException e) {

@@ -2,7 +2,6 @@ package atm;
 
 import java.math.BigInteger;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import atm.infrastructure.exception.InsufficientBanknoteAmountException;
 import atm.infrastructure.exception.UnacceptableInputAmountException;
@@ -27,7 +26,7 @@ class AtmTest {
     @Test
     @DisplayName("Очень неудобно сконструированный (ради интереса -> больше так не буду) тест на приём банкнот")
     void testAcceptBanknotes() {
-        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TEN).findFirst().get().getAmount(), BigInteger.ZERO);
+        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TEN).findFirst().get().getNumber(), BigInteger.ZERO);
 
         assertDoesNotThrow(() ->
                 atm.acceptBanknotes(List.of(new Banknote(BanknoteType.TEN, BigInteger.ONE),
@@ -40,14 +39,14 @@ class AtmTest {
                         new Banknote(BanknoteType.FIVE_THOUSAND, BigInteger.valueOf(8)))));
 
         assertAll(
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TEN).findFirst().get().getAmount(), BigInteger.ONE),
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIFTY).findFirst().get().getAmount(), BigInteger.TWO),
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.HUNDRED).findFirst().get().getAmount(), BigInteger.valueOf(3)),
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TWO_HUNDRED).findFirst().get().getAmount(), BigInteger.valueOf(4)),
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_HUNDRED).findFirst().get().getAmount(), BigInteger.valueOf(5)),
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.THOUSAND).findFirst().get().getAmount(), BigInteger.valueOf(6)),
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TWO_THOUSAND).findFirst().get().getAmount(), BigInteger.valueOf(7)),
-                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getAmount(), BigInteger.valueOf(8))
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TEN).findFirst().get().getNumber(), BigInteger.ONE),
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIFTY).findFirst().get().getNumber(), BigInteger.TWO),
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.HUNDRED).findFirst().get().getNumber(), BigInteger.valueOf(3)),
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TWO_HUNDRED).findFirst().get().getNumber(), BigInteger.valueOf(4)),
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_HUNDRED).findFirst().get().getNumber(), BigInteger.valueOf(5)),
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.THOUSAND).findFirst().get().getNumber(), BigInteger.valueOf(6)),
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TWO_THOUSAND).findFirst().get().getNumber(), BigInteger.valueOf(7)),
+                () -> assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getNumber(), BigInteger.valueOf(8))
         );
     }
 
@@ -109,10 +108,10 @@ class AtmTest {
                 new Banknote(BanknoteType.TEN, BigInteger.valueOf(2))));
 
         assertEquals(BigInteger.valueOf(15470),atm.getAccountBalance());
-        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getAmount(), BigInteger.TWO);
+        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getNumber(), BigInteger.TWO);
         assertDoesNotThrow(() -> atm.getBanknotes(BigInteger.valueOf(7_000)));
-        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getAmount(), BigInteger.ONE);
-        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TWO_THOUSAND).findFirst().get().getAmount(), BigInteger.ZERO);
+        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.FIVE_THOUSAND).findFirst().get().getNumber(), BigInteger.ONE);
+        assertEquals(atm.getBanknoteList().stream().filter(item -> item.getType() == BanknoteType.TWO_THOUSAND).findFirst().get().getNumber(), BigInteger.ZERO);
         assertEquals(BigInteger.valueOf(8470),atm.getAccountBalance());
     }
 

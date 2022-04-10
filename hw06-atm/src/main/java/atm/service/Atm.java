@@ -40,14 +40,14 @@ public class Atm {
     public void acceptBanknotes(List<Banknote> banknotes) {
         for (Banknote banknote : banknotes) {
             switch (banknote.getType()) {
-                case TEN -> tens.setAmount(tens.getAmount().add(banknote.getAmount()));
-                case FIFTY -> fifties.setAmount(fifties.getAmount().add(banknote.getAmount()));
-                case HUNDRED -> hundreds.setAmount(hundreds.getAmount().add(banknote.getAmount()));
-                case TWO_HUNDRED -> twoHundreds.setAmount(twoHundreds.getAmount().add(banknote.getAmount()));
-                case FIVE_HUNDRED -> fiveHundreds.setAmount(fiveHundreds.getAmount().add(banknote.getAmount()));
-                case THOUSAND -> thousands.setAmount(thousands.getAmount().add(banknote.getAmount()));
-                case TWO_THOUSAND -> twoThousands.setAmount(twoThousands.getAmount().add(banknote.getAmount()));
-                case FIVE_THOUSAND -> fiveThousands.setAmount(fiveThousands.getAmount().add(banknote.getAmount()));
+                case TEN -> tens.setNumber(tens.getNumber().add(banknote.getNumber()));
+                case FIFTY -> fifties.setNumber(fifties.getNumber().add(banknote.getNumber()));
+                case HUNDRED -> hundreds.setNumber(hundreds.getNumber().add(banknote.getNumber()));
+                case TWO_HUNDRED -> twoHundreds.setNumber(twoHundreds.getNumber().add(banknote.getNumber()));
+                case FIVE_HUNDRED -> fiveHundreds.setNumber(fiveHundreds.getNumber().add(banknote.getNumber()));
+                case THOUSAND -> thousands.setNumber(thousands.getNumber().add(banknote.getNumber()));
+                case TWO_THOUSAND -> twoThousands.setNumber(twoThousands.getNumber().add(banknote.getNumber()));
+                case FIVE_THOUSAND -> fiveThousands.setNumber(fiveThousands.getNumber().add(banknote.getNumber()));
                 default -> throw new IllegalArgumentException("Unknown banknote type " + banknote.getType());
             }
         }
@@ -60,12 +60,12 @@ public class Atm {
         List<Banknote> resultList = new ArrayList<>();
         for (int i = 0; i < banknoteList.size() && amount.compareTo(BigInteger.ZERO) != 0; i++) {
             Banknote banknote = banknoteList.get(i);
-            while (amount.compareTo(banknote.getType().getDenomination()) >= 0 && banknote.getAmount().compareTo(BigInteger.ZERO) > 0) {
+            while (amount.compareTo(banknote.getType().getDenomination()) >= 0 && banknote.getNumber().compareTo(BigInteger.ZERO) > 0) {
                 amount = amount.subtract(banknote.getType().getDenomination());
-                banknote.setAmount(banknote.getAmount().subtract(BigInteger.ONE));
+                banknote.setNumber(banknote.getNumber().subtract(BigInteger.ONE));
                 if (!resultList.isEmpty() && resultList.get(resultList.size() - 1).getType() == banknote.getType()) {
                     Banknote banknoteWithNeededType = resultList.stream().filter(item -> item.getType() == banknote.getType()).findFirst().get();
-                    banknoteWithNeededType.setAmount(banknoteWithNeededType.getAmount().add(BigInteger.ONE));
+                    banknoteWithNeededType.setNumber(banknoteWithNeededType.getNumber().add(BigInteger.ONE));
                 } else {
                     resultList.add(new Banknote(banknote.getType(), BigInteger.ONE));
                 }
@@ -78,9 +78,9 @@ public class Atm {
         BigInteger sum = BigInteger.ZERO;
         for (Banknote banknote : banknoteList) {
             Banknote cloned = banknote.clone(); //not shallow, but deep copy
-            while (cloned.getAmount().compareTo(BigInteger.ZERO) > 0) {
+            while (cloned.getNumber().compareTo(BigInteger.ZERO) > 0) {
                 sum = sum.add(cloned.getType().getDenomination());
-                cloned.setAmount(cloned.getAmount().subtract(BigInteger.ONE));
+                cloned.setNumber(cloned.getNumber().subtract(BigInteger.ONE));
             }
         }
         return sum;
@@ -106,9 +106,9 @@ public class Atm {
         Banknote cloned;
         for (int i = 0; i < banknoteList.size() && copiedAmount.compareTo(BigInteger.ZERO) != 0; i++) {
             cloned = banknoteList.get(i).clone(); //not shallow, but deep copy
-            while (copiedAmount.compareTo(cloned.getType().getDenomination()) >= 0 && cloned.getAmount().compareTo(BigInteger.ZERO) > 0) {
+            while (copiedAmount.compareTo(cloned.getType().getDenomination()) >= 0 && cloned.getNumber().compareTo(BigInteger.ZERO) > 0) {
                 copiedAmount = copiedAmount.subtract(cloned.getType().getDenomination());//10
-                cloned.setAmount(cloned.getAmount().subtract(BigInteger.ONE));
+                cloned.setNumber(cloned.getNumber().subtract(BigInteger.ONE));
             }
         }
 
@@ -116,7 +116,7 @@ public class Atm {
             StringBuilder stringBuilder = new StringBuilder();
             banknoteList.forEach(item -> {
                 stringBuilder.append("banknote denomination: ").append(item.getType().getDenomination());
-                stringBuilder.append(" current denomination amount: ").append(item.getAmount()).append("\n");
+                stringBuilder.append(" current denomination amount: ").append(item.getNumber()).append("\n");
             });
             throw new InsufficientBanknoteAmountException("(」°ロ°)」 Sorry, we have not enough banknotes for your money request, " +
                     "try to change your request based on the information below: (」°ロ°)」\n" + stringBuilder);
