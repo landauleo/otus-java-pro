@@ -11,15 +11,27 @@ import atm.model.BanknoteType;
 
 public class Atm {
 
-    private volatile Banknote tens = new Banknote(BanknoteType.TEN, BigInteger.ZERO);
-    private volatile Banknote fifties = new Banknote(BanknoteType.FIFTY, BigInteger.ZERO);
-    private volatile Banknote hundreds = new Banknote(BanknoteType.HUNDRED, BigInteger.ZERO);
-    private volatile Banknote twoHundreds = new Banknote(BanknoteType.TWO_HUNDRED, BigInteger.ZERO);
-    private volatile Banknote fiveHundreds = new Banknote(BanknoteType.FIVE_HUNDRED, BigInteger.ZERO);
-    private volatile Banknote thousands = new Banknote(BanknoteType.THOUSAND, BigInteger.ZERO);
-    private volatile Banknote twoThousands = new Banknote(BanknoteType.TWO_THOUSAND, BigInteger.ZERO);
-    private volatile Banknote fiveThousands = new Banknote(BanknoteType.FIVE_THOUSAND, BigInteger.ZERO);
-    private volatile List<Banknote> banknoteList = List.of(fiveThousands, twoThousands, thousands, fiveHundreds, twoHundreds, hundreds, fifties, tens);
+    private Banknote tens;
+    private Banknote fifties;
+    private Banknote hundreds;
+    private Banknote twoHundreds;
+    private Banknote fiveHundreds;
+    private Banknote thousands;
+    private Banknote twoThousands;
+    private Banknote fiveThousands;
+    private List<Banknote> banknoteList;
+
+    public Atm() {
+        this.tens = new Banknote(BanknoteType.TEN, BigInteger.ZERO);
+        this.fifties = new Banknote(BanknoteType.FIFTY, BigInteger.ZERO);
+        this.hundreds = new Banknote(BanknoteType.HUNDRED, BigInteger.ZERO);
+        this.twoHundreds = new Banknote(BanknoteType.TWO_HUNDRED, BigInteger.ZERO);
+        this.fiveHundreds = new Banknote(BanknoteType.FIVE_HUNDRED, BigInteger.ZERO);
+        this.thousands = new Banknote(BanknoteType.THOUSAND, BigInteger.ZERO);
+        this.twoThousands = new Banknote(BanknoteType.TWO_THOUSAND, BigInteger.ZERO);
+        this.fiveThousands = new Banknote(BanknoteType.FIVE_THOUSAND, BigInteger.ZERO);
+        this.banknoteList = List.of(fiveThousands, twoThousands, thousands, fiveHundreds, twoHundreds, hundreds, fifties, tens);
+    }
 
     public List<Banknote> getBanknoteList() {
         return banknoteList;
