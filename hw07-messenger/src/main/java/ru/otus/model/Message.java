@@ -236,6 +236,9 @@ public class Message implements Cloneable{
 
 
         public Builder field13(ObjectForMessage field13) {
+            if (field13 == null || field13.getData() == null) {
+                throw new NullPointerException("ObjectForMessage or its data should not be null");
+            }
             this.field13 = new ObjectForMessage(field13);
             return this;
         }
