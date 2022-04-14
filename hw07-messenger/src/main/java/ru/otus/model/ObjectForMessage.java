@@ -9,9 +9,10 @@ public class ObjectForMessage {
     }
 
     public ObjectForMessage(ObjectForMessage object) {
-        if (object != null && object.data != null) {
-            this.data = List.copyOf(object.data);
+        if (object == null || object.data == null) {
+            throw new NullPointerException("ObjectForMessage or its data should not be null");
         }
+        this.data = List.copyOf(object.data);
     }
 
     public List<String> getData() {

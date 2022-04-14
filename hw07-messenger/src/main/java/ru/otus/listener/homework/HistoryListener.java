@@ -13,11 +13,14 @@ public class HistoryListener implements Listener, HistoryReader {
 
     @Override
     public void onUpdated(Message msg) {
+        if (msg == null) {
+            throw new NullPointerException("Message should not be null");
+        }
         map.put(msg.getId(), msg.clone());
     }
 
     @Override
     public Optional<Message> findMessageById(long id) {
-        return Optional.of(map.get(id));
+        return Optional.ofNullable(map.get(id)); //if non-null, otherwise returns an empty
     }
 }
