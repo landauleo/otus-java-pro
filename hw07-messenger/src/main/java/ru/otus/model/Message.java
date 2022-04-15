@@ -236,7 +236,7 @@ public class Message implements Cloneable{
 
 
         public Builder field13(ObjectForMessage field13) {
-            this.field13 = new ObjectForMessage(field13);
+            this.field13 = field13 == null ? null : new ObjectForMessage(field13);
             return this;
         }
 
