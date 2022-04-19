@@ -25,7 +25,7 @@ class ProcessorTest {
         //given
         var inputDataFileName = "inputData.json";
         var outputDataFileName = "outputData.json";
-        var fullOutputFilePath = String.format("%s%s%s", tempDir, File.separator, outputDataFileName); //TODO: почему именно 3 %s?
+        var fullOutputFilePath = String.format("%s%s%s", tempDir, File.separator, outputDataFileName); //3 %s под каждый следующий аргумент после первого
 
         var loader = new ResourcesFileLoader(inputDataFileName);
         var processor = new ProcessorAggregator();
