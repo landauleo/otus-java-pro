@@ -20,11 +20,11 @@ public class ResourcesFileLoader implements Loader {
     @Override
     public List<Measurement> load() {
         Type listType = new TypeToken<ArrayList<Measurement>>() {}.getType(); //хакнули protected access
-        String jsonString = null;
+        String jsonString;
         try {
             jsonString = new String(getClass().getClassLoader().getResourceAsStream(fileName).readAllBytes());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new FileProcessException(e);
         }
         return new Gson().fromJson(jsonString, listType);
     }
