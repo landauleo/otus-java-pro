@@ -61,11 +61,4 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
                 .collect(Collectors.joining(", "));
     }
 
-    private String getFieldsWithoutIdForInsert() {
-        return entityClassMetaData.getFieldsWithoutId().stream()
-                .map(Field::getName)
-                .collect(Collectors.joining(","))
-                .toLowerCase();
-    }
-
 }
