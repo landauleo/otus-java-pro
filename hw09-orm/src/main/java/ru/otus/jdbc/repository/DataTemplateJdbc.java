@@ -1,4 +1,4 @@
-package ru.otus.jdbc.mapper;
+package ru.otus.jdbc.repository;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -6,20 +6,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import ru.otus.jdbc.repository.DataTemplate;
-import ru.otus.jdbc.repository.DataTemplateException;
+import ru.otus.jdbc.mapper.EntityClassMetaData;
+import ru.otus.jdbc.mapper.EntitySQLMetaData;
 import ru.otus.jdbc.repository.executor.DbExecutor;
 
-import static ru.otus.jdbc.mapper.SQLQuery.INSERT;
-import static ru.otus.jdbc.mapper.SQLQuery.SELECT_ALL;
-import static ru.otus.jdbc.mapper.SQLQuery.SELECT_BY_ID;
-import static ru.otus.jdbc.mapper.SQLQuery.UPDATE;
 
 /**
  * Сохратяет объект в базу, читает объект из базы
@@ -38,7 +32,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public Optional<T> findById(Connection connection, long id) {
-        return dbExecutor.executeSelect(connection, SELECT_BY_ID, List.of(id), resultSet -> {
+        return dbExecutor.executeSelect(connection, entitySQLMetaData.getSelectByIdSql(), List.of(id), resultSet -> {
             try (resultSet) {
                 if (resultSet.next()) {
                     return mapToEntity(resultSet);
@@ -52,7 +46,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @Override
     public List<T> findAll(Connection connection) {
-        return dbExecutor.executeSelect(connection, SELECT_ALL, Collections.emptyList(), resultSet -> {
+        return dbExecutor.executeSelect(connection, entitySQLMetaData.getSelectAllSql(), Collections.emptyList(), resultSet -> {
             try (resultSet) {
                 List<T> instances = new ArrayList<>();
                 while (resultSet.next()) {
@@ -68,7 +62,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     @Override
     public long insert(Connection connection, T object) {
         try {
-            return dbExecutor.executeStatement(connection, INSERT, getValuesToInsert(object));
+            return dbExecutor.executeStatement(connection, entitySQLMetaData.getInsertSql(), getValuesToInsert(object));
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }
@@ -77,7 +71,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     @Override
     public void update(Connection connection, T object) {
         try {
-            dbExecutor.executeStatement(connection, UPDATE, getValuesToUpdate(object));
+            dbExecutor.executeStatement(connection, entitySQLMetaData.getUpdateSql(), getValuesToUpdate(object));
         } catch (Exception e) {
             throw new DataTemplateException(e);
         }

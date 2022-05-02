@@ -1,8 +1,3 @@
-CREATE TABLE test
-(
-    id   int,
-    name varchar(50)
-);
 CREATE TABLE client
 (
     id   bigserial NOT NULL PRIMARY KEY,

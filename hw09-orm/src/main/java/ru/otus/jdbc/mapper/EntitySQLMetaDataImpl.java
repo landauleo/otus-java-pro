@@ -1,5 +1,6 @@
 package ru.otus.jdbc.mapper;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,9 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
     private final String idField;
 
     public EntitySQLMetaDataImpl(EntityClassMetaData<?> entityClassMetaData) {
+        if (entityClassMetaData == null) {
+            throw new IllegalArgumentException("EntityClassMetaData must not be null");
+        }
         this.entityClassMetaData = entityClassMetaData;
         this.entityName = entityClassMetaData.getName().toLowerCase();
         this.idField = entityClassMetaData.getIdField().getName().toLowerCase();
@@ -55,6 +59,13 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
         return entityClassMetaData.getFieldsWithoutId().stream()
                 .map(field -> field.getName().toLowerCase() + " = ?")
                 .collect(Collectors.joining(", "));
+    }
+
+    private String getFieldsWithoutIdForInsert() {
+        return entityClassMetaData.getFieldsWithoutId().stream()
+                .map(Field::getName)
+                .collect(Collectors.joining(","))
+                .toLowerCase();
     }
 
 }

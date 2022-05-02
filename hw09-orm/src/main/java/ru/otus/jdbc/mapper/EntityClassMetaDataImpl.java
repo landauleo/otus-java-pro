@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 import ru.otus.jdbc.annotation.Id;
 
-public class EntityClassMetaDataImpl implements EntityClassMetaData {
+public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private final String className;
 
-    private final Constructor<?> constructor;
+    private final Constructor<T> constructor;
 
     private final Field idField;
 
@@ -19,8 +19,8 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
 
     private final List<Field> fieldsWithoutId;
 
-    public EntityClassMetaDataImpl(Class<?> clazz) {
-        this.className = clazz.getName();
+    public EntityClassMetaDataImpl(Class<T> clazz) {
+        this.className = clazz.getSimpleName(); //clazz.getName() returns ru.otus.jdbc.mapper.client
 
         try {
             this.constructor = clazz.getConstructor();
@@ -46,7 +46,7 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
     }
 
     @Override
-    public Constructor<?> getConstructor() {
+    public Constructor<T> getConstructor() {
         return constructor;
     }
 
