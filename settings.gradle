@@ -1,10 +1,19 @@
 rootProject.name = 'otusJava'
 include 'hw01-gradle'
+
 include 'hw02-generics'
+
 include 'hw03-annotations'
+
 include 'hw04-garbage-collectors:homework'
 include 'hw04-garbage-collectors:initial'
+
 include 'hw05-byteCodes'
+
 include 'hw06-atm'
+
 include 'hw07-messenger'
+
 include 'hw08-json-parser'
+
+include 'hw09-orm'
