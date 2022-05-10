@@ -17,3 +17,5 @@ include 'hw07-messenger'
 include 'hw08-json-parser'
 
 include 'hw09-orm'
+
+include 'hw10-hibernate'
