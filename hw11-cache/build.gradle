@@ -6,6 +6,17 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic")
     implementation("org.ehcache:ehcache")
+    implementation("ch.qos.logback:logback-classic")
+    implementation("org.hibernate:hibernate-core")
+    implementation('org.flywaydb:flyway-core')
+    implementation("org.postgresql:postgresql")
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.with {
+        encoding = 'UTF-8'
+    }
 }
