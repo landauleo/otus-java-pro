@@ -47,12 +47,7 @@ public class CachedDbServiceClientImpl implements DBServiceClient {
 
     @Override
     public Optional<Client> getClient(long id) {
-        return cache.get(id) != null ? Optional.of(cache.get(id)) :
-                transactionManager.doInReadOnlyTransaction(session -> {
-                    var clientOptional = clientDataTemplate.findById(session, id);
-                    log.info("client: {}", clientOptional);
-                    return clientOptional;
-                });
+        return Optional.of(cache.get(id));
     }
 
     @Override
