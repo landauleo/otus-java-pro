@@ -1,0 +1,52 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Клиенты</title>
+    <script>
+        function saveNewClient() {
+            const clientName = document.getElementById('clientNameTextBox').value;
+            const clientLogin = document.getElementById('clientLoginTextBox').value;
+            const clientPassword = document.getElementById('clientPasswordTextBox').value;
+            const clientDataContainer = document.getElementById('clientDataContainer');
+
+             fetch('api/client', {
+                method: 'post',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                body: 'name=' + clientName + '&login=' + clientLogin + '&password=' + clientPassword
+            })
+                .then(response => response.json())
+                .then(client => newClientId.innerHTML = 'Создан новый клиент:' + JSON.stringify(client));
+        }
+
+        function reload() {
+            location.reload();
+        }
+    </script>
+</head>
+
+<body>
+<h4>Создать клиента</h4>
+<input type="text" id="clientNameTextBox" value="3" placeholder="Имя клиента">
+<input type="text" id="clientLoginTextBox" value="3" placeholder="Логин клиента">
+<input type="text" id="clientPasswordTextBox" value="3" placeholder="Пароль клиента">
+<button onclick="saveNewClient()">СОТВОРИТЬ</button>
+<pre id="newClientId"></pre>
+
+<h4>Список всех клиентов</h4>
+<#list clients>
+<table>
+    <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>login</th>
+    </tr>
+    <#items as clients>
+    <tr class="${clients?item_parity}Row">
+        <td>${clients.id}
+        <td>${clients.name}
+        <td>${clients.login}
+    </#items>
+</table>
+</#list>
+<button onclick="refresh()">Обновить</button>
+</body>
+</html>

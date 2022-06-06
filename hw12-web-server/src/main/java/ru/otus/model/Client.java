@@ -1,18 +1,12 @@
 package ru.otus.model;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -28,39 +22,26 @@ public class Client implements Cloneable {
     @Column(name = "name")
     private String name;
 
-    @JoinColumn(name = "address_id")
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Address address;
+    @Column(name = "login")
+    private String login;
 
-    @JoinColumn(name = "client_id", nullable = false, updatable = false) //получается можно ссылаться даже на колонку из другой таблицы О_о
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Phone> phones = new ArrayList<>();
-
-    public Client(Long id, String name, Address address, List<Phone> phones) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.phones = phones;
-    }
+    @Column(name = "password")
+    private String password;
 
     public Client() {
+
     }
 
-    public Client(String name) {
-        this.id = null;
-        this.name = name;
-    }
-
-    public Client(Long id, String name) {
+    public Client(Long id, String name, String login, String password) {
         this.id = id;
         this.name = name;
+        this.login = login;
+        this.password = password;
     }
 
     @Override
     public Client clone() {
-        var address = this.address == null ? null : this.address.clone();
-        var phones = this.phones == null ? null : this.phones.stream().map(Phone::clone).toList();
-        return new Client(this.id, this.name, address, phones);
+        return new Client(this.id, this.name, this.login, this.password);
     }
 
     public Long getId() {
@@ -79,12 +60,43 @@ public class Client implements Cloneable {
         this.name = name;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client client)) return false;
+        return Objects.equals(id, client.id) && Objects.equals(name, client.name) && Objects.equals(login, client.login) && Objects.equals(password, client.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, login, password);
+    }
+
     @Override
     public String toString() {
         return "Client{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
+
 
 }

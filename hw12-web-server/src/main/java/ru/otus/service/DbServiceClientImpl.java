@@ -52,4 +52,15 @@ public class DbServiceClientImpl implements DBServiceClient {
             return clientList;
        });
     }
+
+    @Override
+    public Optional<Client> findByLogin(String loginValue) {
+        return transactionManager.doInReadOnlyTransaction(session -> {
+            var clientOptional = clientDataTemplate.findByEntityField(session, "login", loginValue)
+                    .stream().findFirst();
+            log.info("client: {}", clientOptional);
+            return clientOptional;
+        });
+    }
+
 }
