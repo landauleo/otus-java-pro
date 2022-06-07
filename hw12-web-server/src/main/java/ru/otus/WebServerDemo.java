@@ -16,6 +16,10 @@ import ru.otus.service.TemplateProcessor;
 import ru.otus.service.TemplateProcessorImpl;
 import ru.otus.sessionmanager.TransactionManagerHibernate;
 
+/*
+    // Стартовая страница
+    http://localhost:8080
+ */
 public class WebServerDemo {
 
     public static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
@@ -37,9 +41,9 @@ public class WebServerDemo {
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
         BasicAuthService authService = new ClientBasicAuthServiceImpl(dbServiceClient);
 
-        ClientWebServer usersWebServer = new ClientWebServerImpl(authService, dbServiceClient, gson, templateProcessor, WEB_SERVER_PORT);
+        ClientWebServer clientWebServer = new ClientWebServerImpl(authService, dbServiceClient, gson, templateProcessor, WEB_SERVER_PORT);
 
-        usersWebServer.start();
-        usersWebServer.join();
+        clientWebServer.start();
+        clientWebServer.join();
     }
 }

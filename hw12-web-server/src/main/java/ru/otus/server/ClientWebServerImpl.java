@@ -81,8 +81,8 @@ public class ClientWebServerImpl implements ClientWebServer {
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContextHandler.addServlet(new ServletHolder(new ClientServlet(dbServiceClient, templateProcessor)), "/users");
-        servletContextHandler.addServlet(new ServletHolder(new ClientApiServlet(dbServiceClient, gson)), "/api/user/*");
+        servletContextHandler.addServlet(new ServletHolder(new ClientServlet(dbServiceClient, templateProcessor)), "/clients");
+        servletContextHandler.addServlet(new ServletHolder(new ClientApiServlet(dbServiceClient, gson)), "/api/client/*");
         return servletContextHandler;
     }
 

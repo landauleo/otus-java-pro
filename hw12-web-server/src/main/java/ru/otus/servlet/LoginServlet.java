@@ -2,6 +2,7 @@ package ru.otus.servlet;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -44,9 +45,10 @@ public class LoginServlet extends HttpServlet {
         if (basicAuthService.authenticate(name, password)) {
             HttpSession session = request.getSession();
             session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
-            response.sendRedirect("/users");
+            response.sendRedirect("/clients");
         } else {
-            response.setStatus(SC_UNAUTHORIZED);
+            response.setContentType("text/html");
+            response.getWriter().println(templateProcessor.getPage(LOGIN_PAGE_TEMPLATE, Map.of("authenticated", false)));
         }
 
     }

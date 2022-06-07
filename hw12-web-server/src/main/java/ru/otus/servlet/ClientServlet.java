@@ -15,8 +15,8 @@ import ru.otus.service.TemplateProcessor;
 
 public class ClientServlet extends HttpServlet {
 
-    private static final String USERS_PAGE_TEMPLATE = "clients.html";
-    private static final String TEMPLATE_ATTR_CLIENTS = "clients";
+    private static final String CLIENTS_PAGE_TEMPLATE = "clients.html";
+    private static final String TEMPLATE_ATTR_CLIENT = "clients";
 
     private final DBServiceClient dbServiceClient;
     private final TemplateProcessor templateProcessor;
@@ -29,11 +29,11 @@ public class ClientServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse response) throws IOException {
         Map<String, Object> paramsMap = new HashMap<>();
-        List<Client> all = dbServiceClient.findAll();
-        paramsMap.put(TEMPLATE_ATTR_CLIENTS, all);
+        List<Client> clients = dbServiceClient.findAll();
+        paramsMap.put(TEMPLATE_ATTR_CLIENT, clients);
 
         response.setContentType("text/html");
-        response.getWriter().println(templateProcessor.getPage(USERS_PAGE_TEMPLATE, paramsMap));
+        response.getWriter().println(templateProcessor.getPage(CLIENTS_PAGE_TEMPLATE, paramsMap));
     }
 
 }
