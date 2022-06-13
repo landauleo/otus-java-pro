@@ -1,0 +1,12 @@
+CREATE SEQUENCE hibernate_sequence START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE client
+(
+    id       bigint      NOT NULL PRIMARY KEY,
+    name     varchar(50) NOT NULL,
+    login    varchar(50) NOT NULL UNIQUE,
+    password varchar     NOT NULL
+);
+
+INSERT INTO client ( id, name, login, password )
+VALUES ( 0, 'morty', 'morty', '0AA9E54D6ED21346B473A3AB97A9EB19F0F36D1F81DFB5B57D927A94902991840955DB4B10EDBFA7860FB66DD45CD22E6FD90E9A33AC59E5B0EC85267D7613BC' );
