@@ -7,11 +7,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainer;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
+import ru.otus.exception.AppComponentsContainerException;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
@@ -21,17 +23,17 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     public AppComponentsContainerImpl(Class<?> initialConfigClass) {
         try {
             processConfig(initialConfigClass);
-        } catch (ReflectiveOperationException e) {
+        } catch (Exception e) {
             System.err.println("APPLICATION FAILED TO START:");
-            throw new RuntimeException(e);
         }
     }
 
-    private void processConfig(Class<?> configClass) throws ReflectiveOperationException {
+    private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
+        Object configClassInstance = getNewInstanceByClass(configClass);
         List<Method> components = getComponents(configClass);
-        for (Method method : components) { //интересно, что при foreach исключение в сигнатуре было серым и idea предлагала завернуть всё в try/catch
-            invoke(method, method.getClass());
+        for (Method method : components) { //интересно, что при foreach исключение, которое сначала было в сигнатуре стало серым и idea предлагала завернуть всё в try/catch
+            invoke(method, configClassInstance);
         }
     }
 
@@ -54,27 +56,40 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
-        return (C) appComponents.stream().filter(component -> component.getClass().equals(componentClass)).findFirst().orElseThrow(() -> {
-            throw new IllegalArgumentException(String.format("No components by name %s", componentClass.getName()));
-        });
+        return (C) appComponents.stream()
+                .filter(appComponent -> componentClass.isAssignableFrom(appComponent.getClass())) //if the class or interface represented by this Class object is either the same as, or is a superclass or superinterface of
+                .findFirst().orElseThrow(() -> new AppComponentsContainerException("Can't get component of class " + componentClass.getSimpleName()));
     }
 
     @Override
     public <C> C getAppComponent(String componentName) {
-        return (C) appComponentsByName.get(componentName);
+        return (C) Optional.ofNullable(appComponentsByName.get(componentName))
+                .orElseThrow(() -> new AppComponentsContainerException("Can't get component " + componentName));
     }
 
-    private void invoke(Method method, Class<?> clazz) throws ReflectiveOperationException {
-        Object instance = getNewInstanceByClass(clazz);
-        method.invoke(instance);
-        appComponents.add(instance);
-        appComponentsByName.put(clazz.getName(), instance);
-        System.out.println(method.getName() + " INSTANTIATED");
+    private void invoke(Method method, Object configClassInstance) {
+        String componentName = method.getName();
+        ;
+        try {
+            if (appComponentsByName.containsKey(componentName)) {
+                throw new AppComponentsContainerException("Duplicate components " + componentName + " in config class " + configClassInstance.getClass().getSimpleName());
+            }
+            Object[] params = Arrays.stream(method.getParameterTypes()).map(this::getAppComponent).toArray();
+            Object newComponent = method.invoke(configClassInstance, params);
+            appComponents.add(newComponent);
+            appComponentsByName.put(componentName, newComponent);
+        } catch (Exception e) {
+            throw new AppComponentsContainerException("Failed to invoke " + componentName, e);
+        }
 
     }
 
-    private Object getNewInstanceByClass(Class<?> clazz) throws ReflectiveOperationException {
-        return clazz.getDeclaredConstructor().newInstance();
+    private Object getNewInstanceByClass(Class<?> clazz) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new AppComponentsContainerException("Failed to create " + clazz.getSimpleName(), e);
+        }
     }
 
 }
