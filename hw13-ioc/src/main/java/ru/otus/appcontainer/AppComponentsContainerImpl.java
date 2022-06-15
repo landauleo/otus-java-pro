@@ -28,6 +28,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
+    public AppComponentsContainerImpl(Class<?>... initialConfigClasses) {
+        processConfig(initialConfigClasses);
+    }
+
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
         Object configClassInstance = getNewInstanceByClass(configClass);
@@ -35,6 +39,12 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         for (Method method : components) { //интересно, что при foreach исключение, которое сначала было в сигнатуре стало серым и idea предлагала завернуть всё в try/catch
             invoke(method, configClassInstance);
         }
+    }
+
+    private void processConfig(Class<?>... configClasses) {
+        Arrays.stream(configClasses)
+                .sorted(Comparator.comparingInt(config -> config.getAnnotation(AppComponentsContainerConfig.class).order()))
+                .forEach(this::processConfig);
     }
 
     private void checkConfigClass(Class<?> configClass) {
