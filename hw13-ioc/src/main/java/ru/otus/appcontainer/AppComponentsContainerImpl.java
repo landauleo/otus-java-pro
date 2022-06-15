@@ -3,13 +3,17 @@ package ru.otus.appcontainer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
 import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainer;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
@@ -29,7 +33,14 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     public AppComponentsContainerImpl(Class<?>... initialConfigClasses) {
-        processConfig(initialConfigClasses);
+        processConfig(Arrays.asList(initialConfigClasses));
+    }
+
+    public AppComponentsContainerImpl(String packageToScan) {
+        // так не работает -> note that Object class is excluded by default, in order to reduce store size. Use filterResultsBy(Predicate) to change, for example SubTypes.filterResultsBy(c -> true)
+        //Set<Class<?>> classes = new Reflections(packageToScan).getSubTypesOf(Object.class);
+        Set<Class<?>> classes = new Reflections(packageToScan, Scanners.SubTypes.filterResultsBy(c -> true)).getSubTypesOf(Object.class);
+        processConfig(classes);
     }
 
     private void processConfig(Class<?> configClass) {
@@ -41,9 +52,8 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
-    private void processConfig(Class<?>... configClasses) {
-        Arrays.stream(configClasses)
-                .sorted(Comparator.comparingInt(config -> config.getAnnotation(AppComponentsContainerConfig.class).order()))
+    private void processConfig(Collection<Class<?>> configClasses) {
+        configClasses.stream().sorted(Comparator.comparingInt(config -> config.getAnnotation(AppComponentsContainerConfig.class).order()))
                 .forEach(this::processConfig);
     }
 
