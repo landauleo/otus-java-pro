@@ -14,31 +14,36 @@ import ru.otus.services.GameProcessorImpl;
 В итоге должно получиться работающее приложение. Менять можно только класс AppComponentsContainerImpl.
 Можно добавлять свои исключения.
 
-Раскоментируйте тест:
-@Disabled //надо удалить
-Тест и демо должны проходить для всех реализованных вариантов
-Не называйте свой проект ДЗ "homework-template", это имя заготовки)
-
 PS Приложение представляет собой тренажер таблицы умножения
 */
 
 public class App {
 
     public static void main(String[] args) throws Exception {
-        // Опциональные варианты
-//        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig1.class, AppConfig2.class);
+        /*
+         * Вариант 1: 1 конфигурационный класс
+         * для проверки закомментировать AppConfig1.class и AppConfig2.class
+         */
+        //AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class);
 
-        // Тут можно использовать библиотеку Reflections (см. зависимости)
-        AppComponentsContainer container = new AppComponentsContainerImpl("ru.otus.config");
+        /*
+         * Вариант 2: несколько конфигурационных классов
+         * для проверки закомментировать AppConfig.class
+         */
+        //AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig1.class, AppConfig2.class);
 
-        // Обязательный вариант
-//        AppComponentsContainer container = new AppComponentsContainerImpl(AppConfig.class);
+        /*
+         * Вариант 3: поиск конфигурационных классов по пакету
+         * для проверки закомментировать AppConfig.class или AppConfig1.class и AppConfig2.class
+         */
+        //AppComponentsContainer container = new AppComponentsContainerImpl("ru.otus.config");
 
-        // Приложение должно работать в каждом из указанных ниже вариантов
-        GameProcessor gameProcessor = container.getAppComponent(GameProcessor.class);
-//        GameProcessor gameProcessor = container.getAppComponent(GameProcessorImpl.class);
-//        GameProcessor gameProcessor = container.getAppComponent("gameProcessor");
 
-        gameProcessor.startGame();
+        //Приложение должно работать в каждом из указанных ниже вариантов
+        //GameProcessor gameProcessor = container.getAppComponent(GameProcessor.class);
+        //GameProcessor gameProcessor = container.getAppComponent(GameProcessorImpl.class);
+        //GameProcessor gameProcessor = container.getAppComponent("gameProcessor");
+
+        //gameProcessor.startGame();
     }
 }
