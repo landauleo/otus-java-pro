@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("address")
@@ -16,6 +17,7 @@ public class Address implements Cloneable, Persistable<Long> {
     private final Long id;
 
     @Nonnull
+    @Column("street")
     private final String street;
 
     @Transient
@@ -27,6 +29,13 @@ public class Address implements Cloneable, Persistable<Long> {
         this.isNew = id == null;
     }
 
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", street='" + street + '\'' +
+                '}';
+    }
 
     @Override
     protected Address clone() {

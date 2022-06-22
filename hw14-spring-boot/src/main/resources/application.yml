@@ -12,3 +12,6 @@ spring:
   freemarker:
     template-loader-path: classpath:/templates/
     suffix: .ftl
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: TRACE

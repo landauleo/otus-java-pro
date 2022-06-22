@@ -26,11 +26,14 @@ public class Client implements Persistable<Long>, Cloneable {
     private final String name;
 
     //The @MappedCollection annotation can be used on a reference type (one-to-one relationship)
+    @Nonnull
+
     @MappedCollection(idColumn = "client_id")
     private final Address address;
 
     //When using List and Map you must have an additional column for the position of a dataset in the List or the key value of the entity in the Map
-    @MappedCollection(idColumn = "client_id", keyColumn = "number")
+    @Nonnull
+    @MappedCollection(idColumn = "client_id", keyColumn = "id")
     private final List<Phone> phones;
 
     @Transient
@@ -76,5 +79,14 @@ public class Client implements Persistable<Long>, Cloneable {
         return isNew;
     }
 
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                ", phones=" + phones +
+                '}';
+    }
 
 }
