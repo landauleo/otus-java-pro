@@ -22,10 +22,10 @@
                     <input required type="text" id="clientNameTextBox" name="name" value="Эрик Картман" placeholder="Имя">
                 </div>
                 <div style="padding-right: 10px">
-                    <input required type="text" id="clientPhoneTextBox" name="phone" value="8 800 555 35 35" placeholder="Телефон">
+                    <input required type="number" id="clientPhoneTextBox" name="phone" value="8 800 555 35 35" placeholder="Телефон">
                 </div>
                 <div style="padding-right: 10px">
-                    <input type="text" id="clientAdditionalPhoneTextBox" value="-" name="additionalPhone" placeholder="Дополнительный телефон">
+                    <input type="number" id="clientAdditionalPhoneTextBox" value="-" name="additionalPhone" placeholder="Дополнительный телефон">
                 </div>
                 <div style="padding-right: 10px">
                     <input required type="text" id="clientStreetTextBox" value="Южнопарковая" name="street" placeholder="Улица">
@@ -45,7 +45,6 @@
                     <th scope="col">name</th>
                     <th scope="col">street</th>
                     <th scope="col">phone</th>
-                    <#--                    <th scope="col">additional phone</th>-->
                 </div>
             </tr>
         </div>
@@ -54,9 +53,9 @@
         <#list clients as client>
             <tr>
                 <th scope="row">${client.id}</th>
-                    <th>${client.name}</th>
-                    <th>${client.address.street}</th>
-                    <td>${client.phones?map(phone -> phone.number)?join("; ")}</td>
+                <th>${client.name}</th>
+                <th>${client.address.street}</th>
+                <td>${client.phones?map(phone -> phone.number)?join("; дополнительный: ")}</td>
             </tr>
         </#list>
     </table>
