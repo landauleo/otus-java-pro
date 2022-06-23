@@ -1,11 +1,14 @@
 package ru.otus.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import ru.otus.model.Address;
 import ru.otus.model.Client;
+import ru.otus.model.Phone;
 import ru.otus.repository.ClientRepository;
 
 @Service
@@ -18,20 +21,15 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client saveClient(Client client) {
-        return clientRepository.save(client);
+    public Client saveClient(String name, String street, Collection<String> phoneNumbers) {
+        Set<Phone> phones = phoneNumbers.stream().filter(StringUtils::hasText).distinct()
+                .map(phoneNumber -> new Phone(null, phoneNumber.trim())).collect(Collectors.toSet());
+        return clientRepository.save(new Client(null, name, new Address(null, street), phones));
     }
 
     @Override
-    public Optional<Client> getClient(long id) {
-        return clientRepository.findById(id);
-    }
-
-    @Override
-    public List<Client> findAll() {
-        List <Client> clients = new ArrayList<>();
-        clientRepository.findAll().forEach(clients::add);
-        return clients;
+    public Iterable<Client> findAll() {
+        return clientRepository.findAll();
     }
 
 }

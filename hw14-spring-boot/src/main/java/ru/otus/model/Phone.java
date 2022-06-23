@@ -4,13 +4,12 @@ package ru.otus.model;
 import javax.annotation.Nonnull;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.domain.Persistable;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table("phone")
-public class Phone implements Cloneable, Persistable<Long> {
+public class Phone implements Cloneable {
 
     @Id
     @Nonnull
@@ -20,36 +19,32 @@ public class Phone implements Cloneable, Persistable<Long> {
     @Nonnull
     private final String number;
 
-    @Transient
-    private final boolean isNew;
-
+    @PersistenceConstructor
     public Phone(Long id, String number) {
         this.id = id;
         this.number = number;
-        this.isNew = id == null;
+    }
+
+    @Nonnull
+    public Long getId() {
+        return id;
+    }
+
+    @Nonnull
+    public String getNumber() {
+        return number;
     }
 
     @Override
     public String toString() {
         return "Phone{" +
-                "id=" + id +
-                ", number='" + number + '\'' +
+                ", number='" + getNumber() + '\'' +
                 '}';
     }
 
     @Override
     protected Phone clone() {
-        return new Phone(this.id, this.number);
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isNew() {
-        return isNew;
+        return new Phone(getId(), getNumber());
     }
 
 }
