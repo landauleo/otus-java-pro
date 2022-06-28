@@ -20,7 +20,7 @@ import ru.otus.sessionmanager.TransactionManagerHibernate;
     // Стартовая страница
     http://localhost:8080
  */
-public class WebServerDemo {
+public class WebServerJetty {
 
     public static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
     private static final int WEB_SERVER_PORT = 8080;
