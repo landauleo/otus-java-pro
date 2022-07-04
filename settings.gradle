@@ -27,5 +27,3 @@ include 'hw12-web-server'
 include 'hw13-ioc'
 
 include 'hw14-spring-boot'
-
-include 'hw15-executors'
