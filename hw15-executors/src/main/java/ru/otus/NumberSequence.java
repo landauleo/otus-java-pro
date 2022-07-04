@@ -26,8 +26,8 @@ public class NumberSequence {
 //        for (int j = 0; j != 2; j++) { //если не хочется смотреть бесконечно
             try {
                 for (int i = 1; i < 10; ++i) {
-                    //spurious wakeup https://en.wikipedia.org/wiki/Spurious_wakeup
-                    //поэтому не if
+                    //spurious wakeup https://en.wikipedia.org/wiki/Spurious_wakeup -> поэтому не if
+                    //https://errorprone.info/bugpattern/WaitNotInLoop
                     while (last.equals(threadName)) {
                         this.wait();
                     }
