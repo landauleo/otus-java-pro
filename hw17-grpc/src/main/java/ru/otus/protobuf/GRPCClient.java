@@ -62,7 +62,8 @@ public class GRPCClient {
             Thread.sleep(TimeUnit.SECONDS.toMillis(1));
         }
 
-//        latch.await(); //закомментила, чтобы дождаться, пока цикл от сервера дойдёт до нуля
+        System.out.println("LATCH " + latch.getCount());
+        latch.await(); //ждём когда latch опустится до нуля
         channel.shutdown();
     }
 
