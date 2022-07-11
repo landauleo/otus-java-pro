@@ -13,9 +13,9 @@ public class RemoteDBServiceImpl extends RemoteDBServiceGrpc.RemoteDBServiceImpl
 
     @Override
     public void generateNumberSequence(RequestMessage requestMessage, StreamObserver<ResponseMessage> responseObserver) {
-        AtomicLong firstValue = new AtomicLong(requestMessage.getFirstValue()); //TODO а нужны ли атомики?
-        AtomicLong lastValue = new AtomicLong(requestMessage.getLastValue());
-        for (long index = firstValue.longValue(); index <= lastValue.get(); index++) {
+        var firstValue = requestMessage.getFirstValue();
+        var lastValue = requestMessage.getLastValue();
+        for (long index = firstValue; index <= lastValue; index++) {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {

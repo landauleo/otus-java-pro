@@ -4,9 +4,9 @@ public class Request {
     private long firstValue;
     private long lastValue;
 
-    public Request(long firstValue, long lastValue) {
-        this.firstValue = firstValue;
-        this.lastValue = lastValue;
+    public Request() {
+        this.firstValue = 0;
+        this.lastValue = 30L;
     }
 
     public long getFirstValue() {
