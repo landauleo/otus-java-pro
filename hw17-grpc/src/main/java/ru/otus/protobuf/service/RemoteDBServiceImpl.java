@@ -1,7 +1,5 @@
 package ru.otus.protobuf.service;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import io.grpc.stub.StreamObserver;
 import ru.otus.protobuf.generated.RemoteDBServiceGrpc;
 import ru.otus.protobuf.generated.RequestMessage;
