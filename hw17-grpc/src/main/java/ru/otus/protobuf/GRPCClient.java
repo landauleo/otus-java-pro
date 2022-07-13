@@ -55,7 +55,7 @@ public class GRPCClient {
         var valueFromClient = 0;
 
         for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
-            var atomicValue = valueFromServer.getAndSet(0);
+            var atomicValue = valueFromServer.get(); //если от сервера на данном этапе ничего не пришло, не читаем одно valueFromServer второй раз, а предусмотрительно обнуляем
             valueFromClient += atomicValue + 1;
             System.out.printf("٩(｡•́‿•̀｡)۶ CLIENT: %d%n", valueFromClient);
             System.out.printf("===== number of iterations: %d =====%n", i);
