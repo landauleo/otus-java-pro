@@ -6,22 +6,21 @@ sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation("ch.qos.logback:logback-classic")
-    implementation('org.flywaydb:flyway-core')
-    implementation ('com.google.code.findbugs:jsr305')
-    implementation("org.postgresql:postgresql")
-    implementation("com.google.code.gson:gson:${Versions.gson}")
-    implementation("com.google.code.findbugs:jsr305:${Versions.jsr305}")
-
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'com.google.code.findbugs:jsr305'
+    implementation 'org.postgresql:postgresql'
+    implementation 'com.google.code.gson:gson:${Versions.gson}'
+    implementation 'com.google.code.findbugs:jsr305:${Versions.jsr305}'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation "org.springframework.boot:spring-boot-starter-freemarker"
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
 }
 
 test {
     useJUnitPlatform()
     testLogging {
-        events "passed", "skipped", "failed"
+        events 'passed', 'skipped', 'failed'
     }
 }
 
