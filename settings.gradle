@@ -8,7 +8,7 @@ include 'hw03-annotations'
 include 'hw04-garbage-collectors:homework'
 include 'hw04-garbage-collectors:initial'
 
-include 'hw05-byteCodes'
+include 'hw05-bytecode'
 
 include 'hw06-atm'
 
@@ -31,3 +31,5 @@ include 'hw14-spring-boot'
 include 'hw15-executors'
 
 include 'hw16-queues'
+
+include 'hw17-grpc'
