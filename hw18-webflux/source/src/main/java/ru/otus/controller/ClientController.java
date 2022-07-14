@@ -14,7 +14,7 @@ import ru.otus.model.Client;
 import ru.otus.service.ClientService;
 
 
-@RestController("api/v1/clients")
+@RestController//therefore, the @ResponseBody isn't required.
 public class ClientController {
     private static final Logger log = LoggerFactory.getLogger(ClientController.class);
     private final ClientService clientService;
@@ -23,13 +23,13 @@ public class ClientController {
         this.clientService = clientService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_NDJSON_VALUE)
+    @GetMapping(value = "clients/all", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<Client> findAll() {
         log.info("╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ Request for all clients in source app");
         return clientService.findAll();
     }
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "clients", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Mono<Client> save(@RequestParam("name") String name) {
         log.info("╰( ͡° ͜ʖ ͡° )つ──☆*:・ﾟ Request to save client with name:{} in source app", name);
         return clientService.saveClient(name);

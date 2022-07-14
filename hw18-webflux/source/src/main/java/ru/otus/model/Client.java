@@ -1,17 +1,30 @@
 package ru.otus.model;
 
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
+
 import java.util.Objects;
 
-
+@Table("client")
 public class Client {
 
+    @Id
     private Long id;
 
+    @Column("name")
     private String name;
 
+    @PersistenceConstructor
     public Client(Long id, String name) {
         this.id = id;
+        this.name = name;
+    }
+
+    public Client(String name) {
+        this.id = null;
         this.name = name;
     }
 

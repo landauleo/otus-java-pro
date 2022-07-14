@@ -3,7 +3,6 @@ package ru.otus.model;
 
 import java.util.Objects;
 
-
 public class Client {
 
     private Long id;
@@ -13,6 +12,9 @@ public class Client {
     public Client(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Client() {
     }
 
     public Long getId() {

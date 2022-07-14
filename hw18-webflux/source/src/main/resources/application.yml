@@ -1,7 +1,5 @@
 server:
   port: 8081
-  servlet:
-    context-path: /source
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5430/demoDB
@@ -9,3 +7,6 @@ spring:
     password: pwd
   flyway:
     enabled: true
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: TRACE

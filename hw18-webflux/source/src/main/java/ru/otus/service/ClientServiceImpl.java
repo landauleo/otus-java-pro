@@ -17,7 +17,8 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Mono<Client> saveClient(String name) {
-        return Mono.justOrEmpty(clientRepository.save(new Client(null, name))); //if I had more time I'd switch to r2dbc postgresql
+        Client savedClient = clientRepository.save(new Client(null, name));
+        return Mono.justOrEmpty(savedClient); //if I had more time I'd switch to r2dbc postgresql
     }
 
     @Override
