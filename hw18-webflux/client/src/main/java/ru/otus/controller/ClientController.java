@@ -3,6 +3,7 @@ package ru.otus.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,18 @@ public class ClientController {
                 .baseUrl("http://localhost:8081/clients/")
                 .build();
     }
+
+    //old version
+//    @GetMapping(value = "clients/all", produces = MediaType.APPLICATION_NDJSON_VALUE)
+//    public Mono<Iterable<Client>> findAll() {
+//        log.info("(눈_눈) Request for all clients in client app");
+//
+//        return client.get().uri("all")
+//                .accept(MediaType.APPLICATION_NDJSON)
+//                .retrieve()
+//                .bodyToMono( new ParameterizedTypeReference<Iterable<Client>>() {})
+//                .doOnNext(val -> log.info("val:{}", val));
+//    }
 
     @GetMapping(value = "clients/all", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public Flux<Client> findAll() {

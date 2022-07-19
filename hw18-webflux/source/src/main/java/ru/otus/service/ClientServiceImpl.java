@@ -23,7 +23,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public Flux<Client> findAll() {
-        return Flux.fromIterable(clientRepository.findAll()); //if I had more time I'd switch to r2dbc postgresql
+        return Flux.defer(() -> Flux.fromIterable(clientRepository.findAll())); //if I had more time I'd switch to r2dbc postgresql
     }
 
 }
