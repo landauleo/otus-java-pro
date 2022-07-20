@@ -1,0 +1,12 @@
+###
+GET http://localhost:8082/clients/all
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
+###
+POST http://localhost:8082/clients?name=The_Pupa_slug-like _lien
+Accept: */*
+Content-Type: application/json
+Cache-Control: no-cache
+
